@@ -1,0 +1,45 @@
+import { Router } from './sys.router'
+import UserFileController from './controller.userFile'
+const router = new Router()
+
+
+
+
+
+
+
+/**
+ * v2 
+ */
+
+// 获取文件列表
+router.get('/api/auth/user/files', UserFileController.list)
+
+// 创建文件
+router.post('/api/auth/user/file', UserFileController.create)
+
+// 更新文件
+router.put('/api/auth/user/file/:id', UserFileController.update)
+
+// 获取文件
+router.get('/api/auth/user/file/:id', UserFileController.find)
+
+// 获取文件信息
+router.get('/api/auth/user/file/:id/info', UserFileController.findInfo)
+
+// 上传文件封面
+router.post('/api/auth/user/file/:id/cover', UserFileController.uploadCover)
+
+// 文件重命名
+router.put('/api/auth/user/file/:id/rename', UserFileController.rename)
+
+// 删除文件
+router.delete('/api/auth/user/file/:id', UserFileController.delete)
+
+// 共享连接
+router.post('/api/auth/user/file/:id/link', UserFileController.link)
+
+// 分享文件
+router.post('/api/auth/user/file/:id/share/:to', UserFileController.share)
+
+export default router

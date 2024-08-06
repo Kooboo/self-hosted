@@ -1,0 +1,14 @@
+import { Router } from './sys.router'
+import CommunityFileController from './controller.communityFile'
+const router = new Router()
+
+// 获取文件列表
+router.get('/api/auth/community/files', CommunityFileController.list)
+
+router.post('/api/auth/community/file/copy', CommunityFileController.copy)
+
+router.delete('/api/auth/community/file/:id', CommunityFileController.delete)
+
+router.get('/api/auth/community/file/binary', CommunityFileController.getBinary)
+
+export default router

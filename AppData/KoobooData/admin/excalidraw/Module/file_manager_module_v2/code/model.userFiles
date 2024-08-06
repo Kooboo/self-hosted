@@ -1,0 +1,13 @@
+import { createModel } from './orm.index'
+
+const userFileModel = createModel('userFiles', {
+    name: { type: 'string', required: true },
+    fullName: { type: 'string' },
+    url: { type: 'string' },
+    size: { type: 'number' },
+    coverUrl: { type: 'string' },
+    coverFullName: { type: 'string' }, 
+    authorName: { type: 'string', required: true}
+})
+
+export default userFileModel

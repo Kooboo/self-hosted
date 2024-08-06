@@ -1,0 +1,12 @@
+import { Router } from './sys.router'
+import TeamFileController from './controller.teamFile'
+const router = new Router()
+
+// 获取文件列表
+router.get('/api/auth/team/files', TeamFileController.list)
+
+router.post('/api/auth/team/file/:id/copy', TeamFileController.copy)
+
+router.delete('/api/auth/team/file/:id', TeamFileController.delete)
+
+export default router

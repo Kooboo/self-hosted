@@ -1,0 +1,88 @@
+ <script env="server">
+    if (k.request.uploadfile) {
+        var file = k.request.files[0].bytes;
+        var book = k.office.excel.getWorkBookFromBytes(file, ".xls");
+        var newbook = k.office.excel.createNewWorkbook(".xls");
+        var sheet = book.getSheet("Content");
+        var lines;
+
+        var firstLine = true;
+
+        var counter =0;
+
+        sheet.rows.forEach(function(item) {
+
+            if (firstLine) {
+                firstLine = false;
+            } else {
+                var key = item.cells[0].value;
+                var correct = item.cells[3].value; 
+                if (correct) {
+                    var siteLabel = k.site.labels.get(key);
+                    if (siteLabel) {
+                        siteLabel.setCultureValue("en", correct);
+                        k.site.labels.update(siteLabel);
+                        counter +=1; 
+                    }
+                }
+            }
+        });
+
+        k.response.write("Job done, records done: "+counter.toString());
+
+    } else if (k.request.downloadfile) {
+
+        var list = k.site.labels.all();
+
+        var data = [];
+
+        var header = [];
+
+        header.push("Name");
+        header.push("Chinese");
+        header.push("English");
+        header.push("Corrected");
+        data.push(header);
+
+        list.forEach(function(item) {
+            var obj = [];
+            obj.push(item.name);
+            obj.push(item.getCultureValue("zh"));
+            obj.push(item.getCultureValue("en"));
+            obj.push(null);
+            data.push(obj);
+        });
+        var exl = k.office.excel.createNewWorkbook(".xls");
+
+        var sheet = exl.createSheet("Content");
+
+        sheet.fillArrayData(data);
+
+        var bytes = exl.readAsBytes();
+
+        k.response.binary("application/Excel", bytes, "label.xls");
+    }
+</script>
+
+
+<form method="post" enctype="multipart/form-data">
+
+    <p>
+        <label>Download file for editing</label><br />
+        <input type="text" hidden name="downloadfile" value="1" />
+    </p>
+    <p>
+        <input type="submit" value="Download  Excel" />
+    </p>
+</form> 
+
+<form method="post" enctype="multipart/form-data"> 
+    <p>
+        <label>upload corrected enlish version</label><br />
+        <input type="file" name="example1" />
+        <input type="text" hidden name="uploadfile" value="1" />
+    </p>
+    <p>
+        <input type='submit' value="Upload Excel" />
+    </p>
+</form>

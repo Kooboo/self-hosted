@@ -1,0 +1,367 @@
+ /*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+2. [UnoCSS]: allow to override the default border color with css var `--un-default-border-color`
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: var(--un-default-border-color, #e5e7eb); /* 2 */
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+*/
+
+html {
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  text-size-adjust: 100%; /* 2 */
+  -moz-tab-size: 4; /* 3 */
+  tab-size: 4; /* 3 */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0; /* 1 */
+  line-height: inherit; /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0; /* 1 */
+  color: inherit; /* 2 */
+  border-top-width: 1px; /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font family by default.
+2. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; /* 1 */
+  font-size: 1em; /* 2 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0; /* 1 */
+  border-color: inherit; /* 2 */
+  border-collapse: collapse; /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  font-weight: inherit; /* 1 */
+  line-height: inherit; /* 1 */
+  color: inherit; /* 1 */
+  margin: 0; /* 2 */
+  padding: 0; /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button; /* 1 */
+  background-color: transparent; /* 2 */
+  background-image: none; /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield; /* 1 */
+  outline-offset: -2px; /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1; /* 1 */
+  color: #9ca3af; /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block; /* 1 */
+  vertical-align: middle; /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+[hidden] {
+  display: none;
+}
+
+
+*,::before,::after{--un-rotate:0;--un-rotate-x:0;--un-rotate-y:0;--un-rotate-z:0;--un-scale-x:1;--un-scale-y:1;--un-scale-z:1;--un-skew-x:0;--un-skew-y:0;--un-translate-x:0;--un-translate-y:0;--un-translate-z:0;--un-pan-x: ;--un-pan-y: ;--un-pinch-zoom: ;--un-scroll-snap-strictness:proximity;--un-ordinal: ;--un-slashed-zero: ;--un-numeric-figure: ;--un-numeric-spacing: ;--un-numeric-fraction: ;--un-border-spacing-x:0;--un-border-spacing-y:0;--un-ring-offset-shadow:0 0 rgba(0,0,0,0);--un-ring-shadow:0 0 rgba(0,0,0,0);--un-shadow-inset: ;--un-shadow:0 0 rgba(0,0,0,0);--un-ring-inset: ;--un-ring-offset-width:0px;--un-ring-offset-color:#fff;--un-ring-width:0px;--un-ring-color:rgba(147,197,253,0.5);--un-blur: ;--un-brightness: ;--un-contrast: ;--un-drop-shadow: ;--un-grayscale: ;--un-hue-rotate: ;--un-invert: ;--un-saturate: ;--un-sepia: ;--un-backdrop-blur: ;--un-backdrop-brightness: ;--un-backdrop-contrast: ;--un-backdrop-grayscale: ;--un-backdrop-hue-rotate: ;--un-backdrop-invert: ;--un-backdrop-opacity: ;--un-backdrop-saturate: ;--un-backdrop-sepia: ;}::backdrop{--un-rotate:0;--un-rotate-x:0;--un-rotate-y:0;--un-rotate-z:0;--un-scale-x:1;--un-scale-y:1;--un-scale-z:1;--un-skew-x:0;--un-skew-y:0;--un-translate-x:0;--un-translate-y:0;--un-translate-z:0;--un-pan-x: ;--un-pan-y: ;--un-pinch-zoom: ;--un-scroll-snap-strictness:proximity;--un-ordinal: ;--un-slashed-zero: ;--un-numeric-figure: ;--un-numeric-spacing: ;--un-numeric-fraction: ;--un-border-spacing-x:0;--un-border-spacing-y:0;--un-ring-offset-shadow:0 0 rgba(0,0,0,0);--un-ring-shadow:0 0 rgba(0,0,0,0);--un-shadow-inset: ;--un-shadow:0 0 rgba(0,0,0,0);--un-ring-inset: ;--un-ring-offset-width:0px;--un-ring-offset-color:#fff;--un-ring-width:0px;--un-ring-color:rgba(147,197,253,0.5);--un-blur: ;--un-brightness: ;--un-contrast: ;--un-drop-shadow: ;--un-grayscale: ;--un-hue-rotate: ;--un-invert: ;--un-saturate: ;--un-sepia: ;--un-backdrop-blur: ;--un-backdrop-brightness: ;--un-backdrop-contrast: ;--un-backdrop-grayscale: ;--un-backdrop-hue-rotate: ;--un-backdrop-invert: ;--un-backdrop-opacity: ;--un-backdrop-saturate: ;--un-backdrop-sepia: ;}.container{width:100%;}@media (min-width: 640px){.container{max-width:640px;}}@media (min-width: 768px){.container{max-width:768px;}}@media (min-width: 1024px){.container{max-width:1024px;}}@media (min-width: 1280px){.container{max-width:1280px;}}@media (min-width: 1536px){.container{max-width:1536px;}}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0;}.pointer-events-none{pointer-events:none;}.absolute{position:absolute;}.fixed{position:fixed;}.relative{position:relative;}.sticky{position:sticky;}.inset-y-0{top:0;bottom:0;}.-right-4{right:-1rem;}.-top-1{top:-0.25rem;}.bottom-1{bottom:0.25rem;}.left-0{left:0;}.left-2{left:0.5rem;}.right-\[200px\]{right:200px;}.right-0{right:0;}.right-1{right:0.25rem;}.right-2{right:0.5rem;}.top-0{top:0;}.z-\[999\]{z-index:999;}.z-10{z-index:10;}.z-100{z-index:100;}.grid{display:grid;}.col-span-4{grid-column:span 4/span 4;}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr));}.grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr));}.grid-cols-8{grid-template-columns:repeat(8,minmax(0,1fr));}.\!m-0{margin:0 !important;}.m-auto{margin:auto;}.mx-1{margin-left:0.25rem;margin-right:0.25rem;}.mx-2{margin-left:0.5rem;margin-right:0.5rem;}.mx-auto{margin-left:auto;margin-right:auto;}.my-1{margin-top:0.25rem;margin-bottom:0.25rem;}.my-2{margin-top:0.5rem;margin-bottom:0.5rem;}.my-8{margin-top:2rem;margin-bottom:2rem;}.-mt-4{margin-top:-1rem;}.mb-1{margin-bottom:0.25rem;}.mb-2{margin-bottom:0.5rem;}.mb-4{margin-bottom:1rem;}.mb-8{margin-bottom:2rem;}.ml-1{margin-left:0.25rem;}.ml-2{margin-left:0.5rem;}.ml-4{margin-left:1rem;}.ml-auto{margin-left:auto;}.mr-1{margin-right:0.25rem;}.mr-2{margin-right:0.5rem;}.mr-4{margin-right:1rem;}.mr-5{margin-right:1.25rem;}.mt-\[2px\]{margin-top:2px;}.mt-1{margin-top:0.25rem;}.mt-2{margin-top:0.5rem;}.mt-4{margin-top:1rem;}.mt-6{margin-top:1.5rem;}.mt-auto{margin-top:auto;}.box-border{box-sizing:border-box;}.box-content{box-sizing:content-box;}.block{display:block;}.contents{display:contents;}.hidden{display:none;}.\!w-\[240px\]{width:240px !important;}.h-\[200px\]{height:200px;}.h-\[260px\]{height:260px;}.h-\[290px\]{height:290px;}.h-\[400px\]{height:400px;}.h-\[50px\]{height:50px;}.h-1\/2{height:50%;}.h-10{height:2.5rem;}.h-12{height:3rem;}.h-14{height:3.5rem;}.h-16{height:4rem;}.h-2{height:0.5rem;}.h-20{height:5rem;}.h-3{height:0.75rem;}.h-4{height:1rem;}.h-5{height:1.25rem;}.h-6{height:1.5rem;}.h-7{height:1.75rem;}.h-8{height:2rem;}.h-full{height:100%;}.h-screen{height:100vh;}.max-h-\[316px\]{max-height:316px;}.max-h-\[80vh\]{max-height:80vh;}.max-h-20{max-height:5rem;}.max-w-\[calc\(100vw-16px\)\]{max-width:calc(100vw - 16px);}.max-w-6{max-width:1.5rem;}.max-w-800px{max-width:800px;}.max-w-md{max-width:28rem;}.min-h-\[70vh\]{min-height:70vh;}.min-h-11{min-height:2.75rem;}.min-h-12{min-height:3rem;}.min-h-screen{min-height:100vh;}.min-w-\[120px\]{min-width:120px;}.min-w-\[140px\]{min-width:140px;}.min-w-\[160px\]{min-width:160px;}.min-w-11{min-width:2.75rem;}.min-w-5{min-width:1.25rem;}.min-w-full{min-width:100%;}.w-\[100px\]{width:100px;}.w-\[180px\]{width:180px;}.w-\[260px\]{width:260px;}.w-\[calc\(100vw-16px\)\]{width:calc(100vw - 16px);}.w-10{width:2.5rem;}.w-12{width:3rem;}.w-14{width:3.5rem;}.w-17{width:4.25rem;}.w-2{width:0.5rem;}.w-20{width:5rem;}.w-3{width:0.75rem;}.w-4{width:1rem;}.w-6{width:1.5rem;}.w-8{width:2rem;}.w-full{width:100%;}.\!flex{display:flex !important;}.flex{display:flex;}.inline-flex{display:inline-flex;}.flex-1{flex:1 1 0%;}.flex-shrink-0{flex-shrink:0;}.flex-grow-1{flex-grow:1;}.flex-row{flex-direction:row;}.flex-col{flex-direction:column;}.-translate-y-2{--un-translate-y:-0.5rem;transform:translateX(var(--un-translate-x)) translateY(var(--un-translate-y)) translateZ(var(--un-translate-z)) rotate(var(--un-rotate)) rotateX(var(--un-rotate-x)) rotateY(var(--un-rotate-y)) rotateZ(var(--un-rotate-z)) skewX(var(--un-skew-x)) skewY(var(--un-skew-y)) scaleX(var(--un-scale-x)) scaleY(var(--un-scale-y)) scaleZ(var(--un-scale-z));}.translate-x-\[50\%\]{--un-translate-x:50%;transform:translateX(var(--un-translate-x)) translateY(var(--un-translate-y)) translateZ(var(--un-translate-z)) rotate(var(--un-rotate)) rotateX(var(--un-rotate-x)) rotateY(var(--un-rotate-y)) rotateZ(var(--un-rotate-z)) skewX(var(--un-skew-x)) skewY(var(--un-skew-y)) scaleX(var(--un-scale-x)) scaleY(var(--un-scale-y)) scaleZ(var(--un-scale-z));}.rotate-180{--un-rotate-x:0;--un-rotate-y:0;--un-rotate-z:0;--un-rotate:180deg;transform:translateX(var(--un-translate-x)) translateY(var(--un-translate-y)) translateZ(var(--un-translate-z)) rotate(var(--un-rotate)) rotateX(var(--un-rotate-x)) rotateY(var(--un-rotate-y)) rotateZ(var(--un-rotate-z)) skewX(var(--un-skew-x)) skewY(var(--un-skew-y)) scaleX(var(--un-scale-x)) scaleY(var(--un-scale-y)) scaleZ(var(--un-scale-z));}.scale-80{--un-scale-x:0.8;--un-scale-y:0.8;transform:translateX(var(--un-translate-x)) translateY(var(--un-translate-y)) translateZ(var(--un-translate-z)) rotate(var(--un-rotate)) rotateX(var(--un-rotate-x)) rotateY(var(--un-rotate-y)) rotateZ(var(--un-rotate-z)) skewX(var(--un-skew-x)) skewY(var(--un-skew-y)) scaleX(var(--un-scale-x)) scaleY(var(--un-scale-y)) scaleZ(var(--un-scale-z));}.transform{transform:translateX(var(--un-translate-x)) translateY(var(--un-translate-y)) translateZ(var(--un-translate-z)) rotate(var(--un-rotate)) rotateX(var(--un-rotate-x)) rotateY(var(--un-rotate-y)) rotateZ(var(--un-rotate-z)) skewX(var(--un-skew-x)) skewY(var(--un-skew-y)) scaleX(var(--un-scale-x)) scaleY(var(--un-scale-y)) scaleZ(var(--un-scale-z));}.cursor-pointer{cursor:pointer;}.cursor-not-allowed{cursor:not-allowed;}.select-none{-webkit-user-select:none;user-select:none;}.resize-none{resize:none;}.appearance-none{-webkit-appearance:none;appearance:none;}.items-center{align-items:center;}.self-start{align-self:flex-start;}.justify-end{justify-content:flex-end;}.justify-center{justify-content:center;}.justify-between{justify-content:space-between;}.gap-4{gap:1rem;}.space-x-2>:not([hidden])~:not([hidden]){--un-space-x-reverse:0;margin-left:calc(0.5rem * calc(1 - var(--un-space-x-reverse)));margin-right:calc(0.5rem * var(--un-space-x-reverse));}.space-x-4>:not([hidden])~:not([hidden]){--un-space-x-reverse:0;margin-left:calc(1rem * calc(1 - var(--un-space-x-reverse)));margin-right:calc(1rem * var(--un-space-x-reverse));}.space-y-2>:not([hidden])~:not([hidden]){--un-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--un-space-y-reverse)));margin-bottom:calc(0.5rem * var(--un-space-y-reverse));}.space-y-4>:not([hidden])~:not([hidden]){--un-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--un-space-y-reverse)));margin-bottom:calc(1rem * var(--un-space-y-reverse));}.divide-y>:not([hidden])~:not([hidden]){--un-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--un-divide-y-reverse)));border-bottom-width:calc(1px * var(--un-divide-y-reverse));}.dark .dark\:divide-gray-700>:not([hidden])~:not([hidden]){--un-divide-opacity:1;border-color:rgba(55,65,81,var(--un-divide-opacity));}.divide-gray-200>:not([hidden])~:not([hidden]){--un-divide-opacity:1;border-color:rgba(229,231,235,var(--un-divide-opacity));}.overflow-auto{overflow:auto;}.overflow-hidden{overflow:hidden;}.overflow-x-auto{overflow-x:auto;}.overflow-y-auto{overflow-y:auto;}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.whitespace-nowrap{white-space:nowrap;}.whitespace-pre-wrap{white-space:pre-wrap;}.break-words{overflow-wrap:break-word;}.border,.border-1{border-width:1px;}.border-0{border-width:0;}.border-b{border-bottom-width:1px;}.border-l{border-left-width:1px;}.border-t{border-top-width:1px;}.border-\[\#eae8e7\]{--un-border-opacity:1;border-color:rgba(234,232,231,var(--un-border-opacity));}.border-gray-300{--un-border-opacity:1;border-color:rgba(209,213,219,var(--un-border-opacity));}.border-gray-400{--un-border-opacity:1;border-color:rgba(156,163,175,var(--un-border-opacity));}.border-neutral-300{--un-border-opacity:1;border-color:rgba(212,212,212,var(--un-border-opacity));}.border-neutral-400{--un-border-opacity:1;border-color:rgba(163,163,163,var(--un-border-opacity));}.border-transparent{border-color:transparent;}.dark .dark\:border-gray-700{--un-border-opacity:1;border-color:rgba(55,65,81,var(--un-border-opacity));}.hover\:border-emerald-500:hover{--un-border-opacity:1;border-color:rgba(16,185,129,var(--un-border-opacity));}.hover\:border-gray-500:hover{--un-border-opacity:1;border-color:rgba(107,114,128,var(--un-border-opacity));}.\!rounded-lg{border-radius:0.5rem !important;}.rounded{border-radius:0.25rem;}.rounded-full{border-radius:9999px;}.rounded-lg{border-radius:0.5rem;}.rounded-md{border-radius:0.375rem;}.rounded-xl{border-radius:0.75rem;}.rounded-t-xl{border-top-left-radius:0.75rem;border-top-right-radius:0.75rem;}.rounded-bl-lg{border-bottom-left-radius:0.5rem;}.border-dashed{border-style:dashed;}.\!bg-neutral-100{--un-bg-opacity:1 !important;background-color:rgba(245,245,245,var(--un-bg-opacity)) !important;}.\!bg-white{--un-bg-opacity:1 !important;background-color:rgba(255,255,255,var(--un-bg-opacity)) !important;}.bg-\[\#eae8e7\]{--un-bg-opacity:1;background-color:rgba(234,232,231,var(--un-bg-opacity));}.bg-\[\#ededed\],.bg-\[\#EDEDED\]{--un-bg-opacity:1;background-color:rgba(237,237,237,var(--un-bg-opacity));}.bg-\[\#f3f3f3\]{--un-bg-opacity:1;background-color:rgba(243,243,243,var(--un-bg-opacity));}.bg-\[\#f5f5f5\],.bg-neutral-100{--un-bg-opacity:1;background-color:rgba(245,245,245,var(--un-bg-opacity));}.bg-\[\#f7f7f7\]{--un-bg-opacity:1;background-color:rgba(247,247,247,var(--un-bg-opacity));}.bg-blue-500{--un-bg-opacity:1;background-color:rgba(59,130,246,var(--un-bg-opacity));}.bg-emerald-300{--un-bg-opacity:1;background-color:rgba(110,231,183,var(--un-bg-opacity));}.bg-emerald-400{--un-bg-opacity:1;background-color:rgba(52,211,153,var(--un-bg-opacity));}.bg-emerald-500{--un-bg-opacity:1;background-color:rgba(16,185,129,var(--un-bg-opacity));}.bg-gray{--un-bg-opacity:1;background-color:rgba(156,163,175,var(--un-bg-opacity));}.bg-gray-100{--un-bg-opacity:1;background-color:rgba(243,244,246,var(--un-bg-opacity));}.bg-green{--un-bg-opacity:1;background-color:rgba(74,222,128,var(--un-bg-opacity));}.bg-neutral-200{--un-bg-opacity:1;background-color:rgba(229,229,229,var(--un-bg-opacity));}.bg-neutral-700{--un-bg-opacity:1;background-color:rgba(64,64,64,var(--un-bg-opacity));}.bg-red-400{--un-bg-opacity:1;background-color:rgba(248,113,113,var(--un-bg-opacity));}.bg-red-500{--un-bg-opacity:1;background-color:rgba(239,68,68,var(--un-bg-opacity));}.bg-white{--un-bg-opacity:1;background-color:rgba(255,255,255,var(--un-bg-opacity));}.dark .dark\:bg-blue-400{--un-bg-opacity:1;background-color:rgba(96,165,250,var(--un-bg-opacity));}.dark .dark\:bg-gray-800{--un-bg-opacity:1;background-color:rgba(31,41,55,var(--un-bg-opacity));}.dark .dark\:bg-gray-900{--un-bg-opacity:1;background-color:rgba(17,24,39,var(--un-bg-opacity));}.hover\:bg-\[\#ededed\]:hover{--un-bg-opacity:1;background-color:rgba(237,237,237,var(--un-bg-opacity));}.hover\:bg-blue-600:hover{--un-bg-opacity:1;background-color:rgba(37,99,235,var(--un-bg-opacity));}.hover\:bg-emerald-500:hover{--un-bg-opacity:1;background-color:rgba(16,185,129,var(--un-bg-opacity));}.hover\:bg-neutral-100:hover{--un-bg-opacity:1;background-color:rgba(245,245,245,var(--un-bg-opacity));}.hover\:bg-neutral-200:hover{--un-bg-opacity:1;background-color:rgba(229,229,229,var(--un-bg-opacity));}.hover\:bg-neutral-50:hover{--un-bg-opacity:1;background-color:rgba(250,250,250,var(--un-bg-opacity));}.hover\:bg-red-500:hover{--un-bg-opacity:1;background-color:rgba(239,68,68,var(--un-bg-opacity));}.fill-current{fill:currentColor;}.object-cover{object-fit:cover;}.\!p-0{padding:0 !important;}.p-0{padding:0;}.p-1{padding:0.25rem;}.p-16{padding:4rem;}.p-2{padding:0.5rem;}.p-3{padding:0.75rem;}.p-4{padding:1rem;}.px-0\.5{padding-left:0.125rem;padding-right:0.125rem;}.px-1{padding-left:0.25rem;padding-right:0.25rem;}.px-2{padding-left:0.5rem;padding-right:0.5rem;}.px-3{padding-left:0.75rem;padding-right:0.75rem;}.px-4{padding-left:1rem;padding-right:1rem;}.px-5{padding-left:1.25rem;padding-right:1.25rem;}.px-6{padding-left:1.5rem;padding-right:1.5rem;}.px-8{padding-left:2rem;padding-right:2rem;}.py-1{padding-top:0.25rem;padding-bottom:0.25rem;}.py-2{padding-top:0.5rem;padding-bottom:0.5rem;}.py-3{padding-top:0.75rem;padding-bottom:0.75rem;}.py-4{padding-top:1rem;padding-bottom:1rem;}.py-6{padding-top:1.5rem;padding-bottom:1.5rem;}.py-8{padding-top:2rem;padding-bottom:2rem;}.\!pt-8{padding-top:2rem !important;}.pb-\[2px\]{padding-bottom:2px;}.pb-2{padding-bottom:0.5rem;}.pb-4{padding-bottom:1rem;}.pl-\[8px\]{padding-left:8px;}.pl-2{padding-left:0.5rem;}.pl-4{padding-left:1rem;}.pr-0{padding-right:0;}.pr-4{padding-right:1rem;}.pr-6{padding-right:1.5rem;}.pt-0{padding-top:0;}.pt-1{padding-top:0.25rem;}.pt-2{padding-top:0.5rem;}.pt-4{padding-top:1rem;}.pt-6{padding-top:1.5rem;}.pt-8{padding-top:2rem;}.text-center{text-align:center;}.text-left{text-align:left;}.text-\[10px\]{font-size:10px;}.text-\[2rem\]{font-size:2rem;}.text-\[32px\]{font-size:32px;}.text-2xl{font-size:1.5rem;line-height:2rem;}.text-8xl{font-size:6rem;line-height:1;}.text-9xl{font-size:8rem;line-height:1;}.text-base{font-size:1rem;line-height:1.5rem;}.text-lg{font-size:1.125rem;line-height:1.75rem;}.text-sm{font-size:0.875rem;line-height:1.25rem;}.text-xl{font-size:1.25rem;line-height:1.75rem;}.text-xs{font-size:0.75rem;line-height:1rem;}.font-bold{font-weight:700;}.font-extrabold{font-weight:800;}.font-medium{font-weight:500;}.font-semibold{font-weight:600;}.leading-10{line-height:2.5rem;}.leading-tight{line-height:1.25;}.uppercase{text-transform:uppercase;}.\!text-black{--un-text-opacity:1 !important;color:rgba(0,0,0,var(--un-text-opacity)) !important;}.dark .dark\:text-gray-100{--un-text-opacity:1;color:rgba(243,244,246,var(--un-text-opacity));}.dark .dark\:text-gray-200{--un-text-opacity:1;color:rgba(229,231,235,var(--un-text-opacity));}.dark .dark\:text-gray-400{--un-text-opacity:1;color:rgba(156,163,175,var(--un-text-opacity));}.dark .dark\:text-gray-500,.text-gray-500{--un-text-opacity:1;color:rgba(107,114,128,var(--un-text-opacity));}.dark .dark\:text-gray-600,.text-gray-600{--un-text-opacity:1;color:rgba(75,85,99,var(--un-text-opacity));}.dark .dark\:text-gray-900{--un-text-opacity:1;color:rgba(17,24,39,var(--un-text-opacity));}.text-\[rgba\(242\,242\,242\,1\)\]{--un-text-opacity:1;color:rgba(242,242,242,var(--un-text-opacity));}.text-\[rgba\(96\,98\,102\,1\)\]{--un-text-opacity:1;color:rgba(96,98,102,var(--un-text-opacity));}.text-black{--un-text-opacity:1;color:rgba(0,0,0,var(--un-text-opacity));}.text-emerald-400{--un-text-opacity:1;color:rgba(52,211,153,var(--un-text-opacity));}.text-emerald-500{--un-text-opacity:1;color:rgba(16,185,129,var(--un-text-opacity));}.text-gray-700{--un-text-opacity:1;color:rgba(55,65,81,var(--un-text-opacity));}.text-gray-800{--un-text-opacity:1;color:rgba(31,41,55,var(--un-text-opacity));}.text-green{--un-text-opacity:1;color:rgba(74,222,128,var(--un-text-opacity));}.text-green-5{--un-text-opacity:1;color:rgba(34,197,94,var(--un-text-opacity));}.text-neutral-100{--un-text-opacity:1;color:rgba(245,245,245,var(--un-text-opacity));}.text-neutral-300{--un-text-opacity:1;color:rgba(212,212,212,var(--un-text-opacity));}.text-neutral-400{--un-text-opacity:1;color:rgba(163,163,163,var(--un-text-opacity));}.text-neutral-500{--un-text-opacity:1;color:rgba(115,115,115,var(--un-text-opacity));}.text-neutral-600{--un-text-opacity:1;color:rgba(82,82,82,var(--un-text-opacity));}.text-neutral-700{--un-text-opacity:1;color:rgba(64,64,64,var(--un-text-opacity));}.text-orange{--un-text-opacity:1;color:rgba(251,146,60,var(--un-text-opacity));}.text-orange-500{--un-text-opacity:1;color:rgba(249,115,22,var(--un-text-opacity));}.text-red-5,.text-red-500{--un-text-opacity:1;color:rgba(239,68,68,var(--un-text-opacity));}.text-sky-500{--un-text-opacity:1;color:rgba(14,165,233,var(--un-text-opacity));}.text-white{--un-text-opacity:1;color:rgba(255,255,255,var(--un-text-opacity));}.hover\:text-emerald-300:hover{--un-text-opacity:1;color:rgba(110,231,183,var(--un-text-opacity));}.hover\:text-emerald-500:hover{--un-text-opacity:1;color:rgba(16,185,129,var(--un-text-opacity));}.hover\:text-neutral-400:hover{--un-text-opacity:1;color:rgba(163,163,163,var(--un-text-opacity));}.underline-offset-4{text-underline-offset:4px;}.opacity-0{opacity:0;}.opacity-50{opacity:0.5;}.dark .dark\:shadow-slate-700\/\[\.7\]{--un-shadow-color:rgba(51,65,85,.7);}.shadow{--un-shadow:var(--un-shadow-inset) 0 1px 3px 0 var(--un-shadow-color, rgba(0,0,0,0.1)),var(--un-shadow-inset) 0 1px 2px -1px var(--un-shadow-color, rgba(0,0,0,0.1));box-shadow:var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}.shadow-lg{--un-shadow:var(--un-shadow-inset) 0 10px 15px -3px var(--un-shadow-color, rgba(0,0,0,0.1)),var(--un-shadow-inset) 0 4px 6px -4px var(--un-shadow-color, rgba(0,0,0,0.1));box-shadow:var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}.shadow-light{--un-shadow-opacity:1;--un-shadow-color:rgba(246,246,246,var(--un-shadow-opacity));}.shadow-md{--un-shadow:var(--un-shadow-inset) 0 4px 6px -1px var(--un-shadow-color, rgba(0,0,0,0.1)),var(--un-shadow-inset) 0 2px 4px -2px var(--un-shadow-color, rgba(0,0,0,0.1));box-shadow:var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}.shadow-sm{--un-shadow:var(--un-shadow-inset) 0 1px 2px 0 var(--un-shadow-color, rgba(0,0,0,0.05));box-shadow:var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}.hover\:shadow:hover{--un-shadow:var(--un-shadow-inset) 0 1px 3px 0 var(--un-shadow-color, rgba(0,0,0,0.1)),var(--un-shadow-inset) 0 1px 2px -1px var(--un-shadow-color, rgba(0,0,0,0.1));box-shadow:var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}.focus\:outline-1:focus{outline-width:1px;}.outline-emerald-300{--un-outline-color-opacity:1;outline-color:rgba(110,231,183,var(--un-outline-color-opacity));}.focus\:outline:focus{outline-style:solid;}.outline-none{outline:2px solid transparent;outline-offset:2px;}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px;}.focus\:ring:focus{--un-ring-width:1px;--un-ring-offset-shadow:var(--un-ring-inset) 0 0 0 var(--un-ring-offset-width) var(--un-ring-offset-color);--un-ring-shadow:var(--un-ring-inset) 0 0 0 calc(var(--un-ring-width) + var(--un-ring-offset-width)) var(--un-ring-color);box-shadow:var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}.focus\:ring-blue-200:focus{--un-ring-opacity:1;--un-ring-color:rgba(191,219,254,var(--un-ring-opacity));}.focus\:ring-emerald-200:focus{--un-ring-opacity:1;--un-ring-color:rgba(167,243,208,var(--un-ring-opacity));}.grayscale{--un-grayscale:grayscale(1);filter:var(--un-blur) var(--un-brightness) var(--un-contrast) var(--un-drop-shadow) var(--un-grayscale) var(--un-hue-rotate) var(--un-invert) var(--un-saturate) var(--un-sepia);}.filter{filter:var(--un-blur) var(--un-brightness) var(--un-contrast) var(--un-drop-shadow) var(--un-grayscale) var(--un-hue-rotate) var(--un-invert) var(--un-saturate) var(--un-sepia);}@media (min-width: 640px){.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem;}}@media (min-width: 768px){.md\:static{position:static;}.md\:my-4{margin-top:1rem;margin-bottom:1rem;}.md\:block{display:block;}.md\:hidden{display:none;}.md\:h-15{height:3.75rem;}.md\:max-w-\[400px\]{max-width:400px;}.md\:max-w-46rem{max-width:46rem;}.md\:w-\[400px\]{width:400px;}.md\:w-\[50\%\]{width:50%;}.md\:w-56{width:14rem;}.md\:w-auto{width:auto;}.md\:flex{display:flex;}.md\:flex-shrink-0{flex-shrink:0;}.md\:flex-grow-0{flex-grow:0;}.md\:cursor-pointer{cursor:pointer;}.md\:space-y-0>:not([hidden])~:not([hidden]){--un-space-y-reverse:0;margin-top:calc(0px * calc(1 - var(--un-space-y-reverse)));margin-bottom:calc(0px * var(--un-space-y-reverse));}.md\:overflow-hidden{overflow:hidden;}.md\:rounded{border-radius:0.25rem;}.md\:rounded-lg{border-radius:0.5rem;}.md\:bg-\[\#c4c4c4\]{--un-bg-opacity:1;background-color:rgba(196,196,196,var(--un-bg-opacity));}.md\:bg-\[\#eae8e7\]{--un-bg-opacity:1;background-color:rgba(234,232,231,var(--un-bg-opacity));}.md\:bg-\[\#f0efef\]{--un-bg-opacity:1;background-color:rgba(240,239,239,var(--un-bg-opacity));}.md\:bg-\[\#f5f5f5\]{--un-bg-opacity:1;background-color:rgba(245,245,245,var(--un-bg-opacity));}.md\:hover\:bg-\[\#d7d6d7\]:hover{--un-bg-opacity:1;background-color:rgba(215,214,215,var(--un-bg-opacity));}.md\:p-8{padding:2rem;}.md\:px-5{padding-left:1.25rem;padding-right:1.25rem;}.md\:py-4{padding-top:1rem;padding-bottom:1rem;}.md\:py-6{padding-top:1.5rem;padding-bottom:1.5rem;}.md\:pt-\[20vh\]{padding-top:20vh;}.md\:text-left{text-align:left;}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem;}.md\:hover\:underline:hover{text-decoration-line:underline;}.md\:shadow-lg{--un-shadow:var(--un-shadow-inset) 0 10px 15px -3px var(--un-shadow-color, rgba(0,0,0,0.1)),var(--un-shadow-inset) 0 4px 6px -4px var(--un-shadow-color, rgba(0,0,0,0.1));box-shadow:var(--un-ring-offset-shadow), var(--un-ring-shadow), var(--un-shadow);}}@media (min-width: 1280px){.xl\:max-w-\[60\%\]{max-width:60%;}}

@@ -1,0 +1,184 @@
+ <html>
+
+<head>
+	<title>Files</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="tailwind.css">
+	<link rel="stylesheet" href="notyf.min.css">
+	<script src="notyf.min.js"></script>
+</head>
+
+<body env="server">
+	<script>
+		let param = k.request.queryString || {}
+		const { delfile, delall, resetdb, resetsite } = param
+		let errmsg = ''
+		let sucmsg = ''
+		
+		try {
+		
+		    if (k.request.method === "POST") {
+		        if (k.request.files.length > 0) {
+		            const file = k.request.files[0]
+		            const filename = file.fileName
+		            if (filename) {
+		                param = k.file.writeBinary(filename, file.bytes)
+		                if (param) {
+		                    sucmsg = '文件 `' + filename + '` 上传成功'
+		                } else {
+		                    errmsg = '文件 `' + filename + '` 上传失败'
+		                }
+		            }
+		        }
+		    }
+		
+		    else if (delfile) {
+		        // 删除单个文件
+		        if (!['__cover.png', 'sqlite.db'].includes(delfile)) {
+		            k.file.delete(delfile)
+		            sucmsg = '文件删除成功'
+		        } else {
+		            errmsg = '系统保护文件，无法删除'
+		        }
+		    }
+		
+		    else {
+		        if (delall || resetsite) {
+		            // 删除所有用户上传资源
+		            k.file.getAllFiles().filter(i => !['__cover.png', 'sqlite.db'].includes(i.name)).forEach(i => k.file.delete(i.fullName))
+		            sucmsg = '用户文件已清空'
+		        }
+		
+		        if (resetdb || resetsite) {
+		            // 重置数据库
+		            const list = k.sqlite.query(`SELECT * FROM sqlite_master WHERE type = 'table'`)
+		
+		            // 删除所有表 并根据sqlite_master的sql重新创建这个表
+		            list.forEach(item => {
+		                if (item.tbl_name !== 'sqlite_sequence') {
+		                    k.sqlite.query(`DROP TABLE '${item.tbl_name}'`);
+		                    k.sqlite.query(`${item.sql}`);
+		                }
+		            })
+		            // SQLite采用的是变长记录存储，当SQLite删除数据之后，未使用的磁盘空间被添加到一个内在的 `空闲列表` 中
+		            // 清空 `空闲列表`
+		            k.sqlite.query('VACUUM')
+		
+		            sucmsg = '数据库重置成功'
+		        }
+		
+		        if (resetsite) {
+		            sucmsg = '站点重置成功'
+		        }
+		    }
+		} catch (error) {
+		    errmsg = error?.toString?.() || '未知错误'
+		}
+		
+		const allfiles = k.file.getAllFiles()
+		
+		allfiles.sort((a, b) => {
+		    if (a === 'sqlite.db') {
+		        return -1; // 将a置顶
+		    } else if (b === 'sqlite.db') {
+		        return 1; // 将b置顶
+		    } else {
+		        return 0; // 保持原顺序
+		    }
+		})
+		
+		function isImg(name) {
+		    return ['jpg', 'png', 'svg', 'webp', 'jpeg', 'gif'].includes(name?.split?.('.')?.at(-1)?.toLowerCase())
+		}
+		
+		k.utils.clientJS.setVariable('__MSG__', { sucmsg, errmsg })
+	</script>
+
+	<div
+		class="flex flex-col bg-white border shadow-sm rounded-xl dark:bg-gray-800 dark:border-gray-700 dark:shadow-slate-700/[.7]">
+		<!-- card title -->
+		<div class="bg-gray-100 border-b rounded-t-xl py-3 px-4 md:py-4 md:px-5 dark:bg-gray-800 dark:border-gray-700">
+			<p class="mt-1 text-sm text-gray-500 dark:text-gray-500">
+				<span class="font-bold">
+					Files
+				</span>
+
+				<label for="file" class="ml-2 text-sky-500 cursor-pointer">
+					<span>
+						上传文件
+					</span>
+				</label>
+
+				<a class="ml-2 text-orange-500 cursor-pointer" :href="`?delall=1`"
+					onclick = "return confirm('确定清空用户上传的所有文件？\n该操作可能导致站点图片或其他资源显示异常')" >
+					清空文件
+				</a>
+
+				<a class="ml-2 text-red-500 cursor-pointer" :href="`?resetsite=1`"
+					onclick = "return confirm('确定重置站点???\n该操作将清空用户上传的所有文件及清空数据库')" >
+					重置站点
+				</a>
+			</p>
+		</div>
+
+		<form hidden class="hidden" method="post" action="" enctype="multipart/form-data">
+			<input type="file" id="file" name="file" onchange="submit()">
+		</form>
+
+		<table class="shadow min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+			<thead>
+				<tr>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">文件名称</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">文件路径</th>
+					<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">文件大小</th>
+					<th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">操作</th>
+				</tr>
+			</thead>
+			<tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+				<tr v-for="item in allfiles">
+					<td
+						class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center">
+						<a v-if="isImg(item.name)" target="_blank" :href="item.absoluteUrl">
+							<img :src="item.absoluteUrl+'?width=40'" class="object-cover h-10 w-10 block mr-1 border" />
+						</a>
+
+						<span>
+							{{item.name}}
+						</span>
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+						{{item.fullName}}
+					</td>
+					<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+						{{item.stringSize}}
+					</td>
+					<td
+						class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200 text-center space-x-2">
+						<a class="text-sky-500" target="_blank" :download="item.name" :href="item.relativeUrl">
+							下载
+						</a>
+						<a v-if="item.fullName==='sqlite.db'" class="text-red-500" :href="`?resetdb=1`"
+							onclick = "return confirm('确定清空数据库?')" >
+							清空
+						</a>
+						<a v-else class="text-red-500" :href="`?delfile=${item.fullName}`"
+							onclick = "return confirm('确定删除该文件?')" > 删除</a >
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>
+
+<script env="client">
+	window.onload = function () {
+	    window.history.pushState({}, '', window.location.pathname);
+	    var notyf = new Notyf({ position: { x: 'right', y: 'top' }, duration: 5000 })
+	    var msg = window.__MSG__ || {}
+	    msg.sucmsg && notyf.success(msg.sucmsg)
+	    msg.errmsg && notyf.error(msg.errmsg)
+	}
+</script>
+
+</html>

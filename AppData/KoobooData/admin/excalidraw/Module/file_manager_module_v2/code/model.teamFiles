@@ -1,0 +1,13 @@
+import { createModel } from './orm.index'
+
+const teamFilesModel = createModel('teamFiles', {
+    name: { type: 'string', required: true },
+    fullName: { type: 'string' },
+    url: { type: 'string' },
+    size: { type: 'number' },
+    coverFullName: { type: 'string' },
+    coverUrl: { type: 'string'},
+    authorName: { type: 'string', required: true}
+})
+
+export default teamFilesModel

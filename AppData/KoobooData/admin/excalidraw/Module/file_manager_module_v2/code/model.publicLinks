@@ -1,0 +1,11 @@
+import { createModel } from './orm.index'
+
+const publicLinksModel = createModel('publicLinks', {
+    fileId: { type: 'string', required: true },
+    fullName: { type: 'string', required: true},
+    expirationTime: { type: 'timestamp'},
+    securityCode: { type: 'string', required: true },
+    authorName: { type: 'string', required: true }
+})
+
+export default publicLinksModel

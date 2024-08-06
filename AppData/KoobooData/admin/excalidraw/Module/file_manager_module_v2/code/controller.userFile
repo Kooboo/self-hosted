@@ -1,0 +1,208 @@
+import { CustomContext } from './sys.router'
+import { CustomError, getRandomString, deepClone } from './sys.utils'
+import userFileModel from './model.userFiles'
+import teamfileModel from './model.teamFiles'
+import publicLinksModel from './model.publicLinks'
+
+class UserFileController {
+    list(ctx: CustomContext) {
+        const fileList = userFileModel.findAll({ authorName: ctx._user})
+        return deepClone(fileList).map(file => ({
+            id: file._id,
+            name: file.name,
+            url: file.url,
+            size: file.size,
+            coverUrl: file.coverUrl
+        }))
+    }
+
+    create(ctx: CustomContext) {
+        const { dataType } = k.site.info.setting
+        const { _user, body, Model, files } = ctx
+        const name = body?.name || Model?.name
+        const content = body.content
+        const contentFile = files[0]
+        const _file = userFileModel.create({
+            name,
+            authorName: _user
+        })
+        let fileInfo: KScript.FileInfo
+        if (content) {
+            fileInfo = k.file.write(`/user_file/${_user}/content/${_file._id}${dataType ? '.' + dataType : ''}`, content)
+        } else if (contentFile.bytes) {
+            fileInfo = k.file.writeBinary(`/user_file/${_user}/content/${_file._id}${dataType ? '.' + dataType : ''}`, contentFile.bytes)
+        }
+        const file = userFileModel.updateById(_file._id, {
+            fullName: fileInfo.fullName,
+            url: fileInfo.url,
+            size: fileInfo.size
+        })
+        return {
+            id: file._id,
+            name: file.name,
+            size: file.size
+        }
+    }
+
+    update(ctx: CustomContext) {
+        const { _user, body, Model, files, params: { id } } = ctx
+        const name = body?.name || Model?.name
+        const content = body?.content
+        const contentFile = files[0]
+        const _file = userFileModel.findOne({
+            _id: id,
+            authorName: _user
+        })
+        if (!_file) throw new CustomError(404, 'File does not exist')
+        let fileInfo: KScript.FileInfo
+        if (content) {
+            fileInfo = k.file.write(_file.fullName, content)
+        } else if (contentFile?.bytes) {
+            fileInfo = k.file.writeBinary(_file.fullName, contentFile.bytes)
+        }
+        const file = userFileModel.updateById(id, {
+            name: name || undefined,
+            size: fileInfo?.size
+        })
+        return {
+            id,
+            name: file.name,
+            size: file.size
+        }
+    }
+
+    find(ctx: CustomContext) {
+        const { _user, params: { id } } = ctx
+        const file = userFileModel.findOne({
+            _id: id,
+            authorName: _user
+        })
+        if (!file) throw new CustomError(404, 'File does not exist')
+        const content = k.file.read(file.fullName)
+        return {
+            id: file._id,
+            name: file.name,
+            content,
+        }
+    }
+
+    findInfo(ctx: CustomContext) {
+        const { _user, params: { id } } = ctx
+        const file = userFileModel.findOne({
+            _id: id,
+            authorName: _user
+        })
+        return {
+            id: file._id,
+            name: file.name,
+            url: file.url,
+            coverUrl: file.coverUrl,
+            size: file.size
+        }
+    }
+
+    uploadCover(ctx: CustomContext) {
+        const { coverType } = k.site.info.setting
+        const { _user, params: { id } } = ctx
+        const _file = userFileModel.findOne({
+            _id: id,
+            authorName: _user
+        })
+        if (!_file) throw new CustomError(404, 'File does not exist')
+        const cover = ctx?.files[0]
+        if (!cover) throw new CustomError(400)
+        const fileInfo = k.file.writeBinary(`/user_file/${_user}/cover/${id}${coverType ? '.' + coverType : ''}`, cover.bytes)
+        const file = userFileModel.updateById(id, {
+            coverFullName: fileInfo.fullName,
+            coverUrl: fileInfo.url
+        })
+        return {
+            id: file._id,
+            name: file.name,
+            coverUrl: file.coverUrl,
+        }
+    }
+
+    rename(ctx: CustomContext) {
+        const { _user, params: { id }, body: { newName } } = ctx
+        userFileModel.updateOne({
+            _id: id,
+            authorName: _user
+        }, {
+            name: newName
+        })
+        return `File has been renamed to ${newName}`
+    }
+
+    delete(ctx: CustomContext) {
+        const { _user, params: { id } } = ctx
+        const file = userFileModel.findOne({
+            _id: id,
+            authorName: _user
+        })
+        if (!file) throw new CustomError(404, 'File does not exist')
+        k.file.delete(file.fullName)
+        k.file.delete(file.coverFullName)
+        userFileModel.deleteById(file._id)
+        publicLinksModel.deleteOne({
+            fileId: file._id
+        })
+        return 'Delete successful'
+    }
+
+    share(ctx: CustomContext) {
+        const { dataType, coverType } = k.site.info.setting
+        const { _user, params: { to, id }, body: { shareName } } = ctx
+        const file = userFileModel.findOne({ authorName: _user, _id: id })
+        if (!file) throw new CustomError(404)
+        const fileBinary = k.file.readBinary(file.fullName)
+        const coverBinary = file.coverFullName ? k.file.readBinary(file.coverFullName) : null
+        if (to === 'team') {
+            const newFile = teamfileModel.create({
+                name: shareName,
+                authorName: _user
+            })
+            const fileInfo = k.file.writeBinary(`/team_file/content/${newFile._id}${dataType ? '.' + dataType : ''}`, fileBinary)
+            const coverInfo = 
+                coverBinary 
+                    ? k.file.writeBinary(`/team_file/cover/${newFile._id}${coverType ? '.' + coverType : ''}`, coverBinary) 
+                    : null
+            teamfileModel.updateById(newFile._id, {
+                fullName: fileInfo.fullName,
+                url: fileInfo.url,
+                size: fileInfo.size,
+                coverFullName: coverInfo?.fullName,
+                coverUrl: coverInfo?.url
+            })
+            return `File ${file.name} has been shared to team files with the name ${shareName}`
+        } else if (to === 'community') {
+            const { appType } = k.site.info.setting
+            k.utils.community.shareBinary(appType, shareName, '', fileBinary, coverBinary)
+            return `File ${file.name} has been shared to community files with the name ${shareName}`
+        } else throw new CustomError(400)
+    }
+
+    link(ctx: CustomContext) {
+        const { _user, params: { id }, body: { validityPeriod } } = ctx
+        const file = userFileModel.findOne({ authorName: _user, _id: id })
+        if (!file) throw new CustomError(404)
+        const expirationTime = validityPeriod === 0 ? 0 : new Date().getTime() + validityPeriod
+        const securityCode = getRandomString(20)
+        const linkData = {
+            fileId: file._id,
+            fullName: file.fullName,
+            url: file.url,
+            expirationTime,
+            securityCode,
+            authorName: _user
+        }
+        const link = publicLinksModel.findOne({ authorName: _user, fileId: file._id })
+        if (link) {
+            return publicLinksModel.updateById(link._id, linkData)
+        } else {
+            return publicLinksModel.create(linkData)
+        }
+    }
+}
+
+export default new UserFileController

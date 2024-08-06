@@ -1,0 +1,100 @@
+
+import { Router } from './sys.router'
+import userFileRouter from './router.userFile'
+import teamFileRouter from './router.teamFile'
+import communityRouter from './router.communityFile'
+
+import userFilesModel from './model.userFiles'
+import teamFilesModel from './model.teamFiles'
+import publicLinksModel from './model.publicLinks'
+
+import { CustomError } from './sys.utils'
+
+import { execSpecialRouter, pathExistInSpecialRouter } from './router.special'
+
+export default function API() {
+    const path = k.request.url.replace(/\?.*$/, '')
+    if (pathExistInSpecialRouter(path)) {
+        return execSpecialRouter(path)
+    }
+    const method = k.request.method
+    const router = new Router()
+
+    router.use(userFileRouter)
+    router.use(teamFileRouter)
+    router.use(communityRouter)
+
+    router.get('/api/auth/init/db', () => {
+        return [
+            userFilesModel._createTable(),
+            teamFilesModel._createTable(),
+            publicLinksModel._createTable()
+        ]
+    })
+
+    router.get('/api/public/auth', ({ _user }) => {
+        if (_user) {
+            const orgUsers = k.account.organization.current.users
+            const auth = orgUsers.some(user => user.userName === _user)
+            return auth
+        }
+        else return false
+    })
+
+    router.get('/api/public/link', ({ query }) => {
+        const { id, securityCode } = query
+        const link = publicLinksModel.findById(id)
+        const file = userFilesModel.findById(link.fileId)
+        let valid = true
+        if (!link || !file) valid = false
+        if (securityCode !== link.securityCode) valid = false
+        if (link.expirationTime !== 0 && link.expirationTime - new Date().getTime() <= 0) valid = false
+        if (!valid) throw new CustomError(400, 'Link is invalid')
+        const content = k.file.read(link.fullName)
+        return {
+            name: file.name,
+            content,
+            size: file.size,
+            authorName: file.authorName
+        }
+    })
+
+    router.get('/api/public/link/info', ({ query }) => {
+        const { id, securityCode } = query
+        const link = publicLinksModel.findById(id)
+        let valid = true
+        if (!link) valid = false
+        if (securityCode !== link.securityCode) valid = false
+        if (link.expirationTime !== 0 && link.expirationTime - new Date().getTime() <= 0) valid = false
+        if (!valid) throw new CustomError(400, 'Link is invalid')
+        const file = userFilesModel.findById(link.fileId)
+        return {
+            name: file.name,
+            url: file.url,
+            size: file.size,
+            authorName: file.authorName,
+            coverUrl: file.coverUrl
+        }
+    })
+
+    const handler = router.route(method, path, { _user: k.account?.user?.userName || 'lijiaxiang', ...k.request })
+
+    try {
+        const data = handler()
+        if (data || data === false) {
+            k.response.json({
+                code: 0,
+                data,
+                message: 'success'
+            })
+        }
+    } catch (error: CustomError) {
+        let { message, errorCode } = error
+        k.response.statusCode(errorCode)
+        k.response.json({
+            code: errorCode,
+            data: null,
+            message
+        })
+    }
+}

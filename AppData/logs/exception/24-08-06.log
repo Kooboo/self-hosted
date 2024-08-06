@@ -1,0 +1,3 @@
+Response status code does not indicate success: 404 (Not Found).   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at Kooboo.Data.Service.UpgradeService.Execute() in D:\KoobooCoding\KoobooServer\src\SubModule\Kooboo.Data\Service\UserLoginProtection.cs:line 12
+   at Kooboo.Jobs.JobWorker.pwgKi4ou5() in D:\KoobooCoding\KoobooServer\src\SubModule\Kooboo.Data\Jobs\JobWorker.cs:line 54System.Net.Http

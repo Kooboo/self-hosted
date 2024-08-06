@@ -1,0 +1,23 @@
+const SpecialRouter: Record<string, Function> = {
+    // '/api/auth/special/community/file/binary': () => {
+    //     const mehtod = k.request.method
+    //     if (mehtod === 'GET') {
+    //         const url = decodeURIComponent(k.request.queryString.url)
+    //         const binary = k.utils.community.downloadFile(url)
+    //         k.response.binary('image/svg+xml', binary)
+    //     }
+    // }
+}
+
+export const addSpecialRouter = (path: string, handler: Function) => {
+    if (SpecialRouter[path]) return
+    SpecialRouter[path] = handler
+}
+
+export const execSpecialRouter = (path: string) => {
+    return SpecialRouter[path]()
+}
+
+export const pathExistInSpecialRouter = (path: string) => {
+    return !!SpecialRouter[path]
+}

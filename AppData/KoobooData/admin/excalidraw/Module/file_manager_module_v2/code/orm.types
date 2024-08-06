@@ -1,0 +1,69 @@
+export type FieldType = 'number' | 'float' | 'string' | 'boolean' | 'timestamp' | 'array' | 'object';
+
+export interface TableConfig {
+    type: FieldType; // 类型
+    required?: boolean; // 必填
+    primaryKey?: boolean; // 主键
+    autoincrement?: boolean; // 自增
+    ref?: string; // 外键
+    default?: string | number | boolean; // 默认值
+
+    validate?: (value: any, row: any, type: 'create' | 'update' | 'remove') => string | undefined;
+}
+
+export type Schema = {
+    [key: string]: TableConfig;
+}
+
+export type WhereCondition<T> = T & { [K in keyof T]: T[] | T } & { [K in string]: T[] | T }
+
+export type OrderConfig<T> = keyof T | { prop: keyof T; order?: 'ascending' | 'descending'; }
+
+// 分页查询
+export interface PagingParams<T> {
+    page: number;
+    page_size: number;
+    sort?: OrderConfig<T> | OrderConfig<T>[];
+}
+
+
+export type Options = {
+    timestamps: true | false | {
+        createdAt: `${any}${string}`;
+        updatedAt: `${any}${string}`;
+    }
+}
+
+
+/**
+ * 类型逆推
+ * 获取字段类型
+ */
+
+export type OutputBaseModal<T extends Options> =
+    T["timestamps"] extends true
+    ? {
+        _id: string;
+        created: number;
+        updated: number;
+    }
+    : T["timestamps"] extends { createdAt: any; updatedAt: any }
+    ? {
+        _id: string;
+    } & {
+        [K in T["timestamps"]['createdAt'] | T["timestamps"]['updatedAt']]: number;
+    }
+    : { _id: string };
+
+
+export type OutputTabelModel<T> = {
+    [K in keyof T]: T[K]['type'] extends 'string' ? string :
+    T[K]['type'] extends 'number' ? number :
+    T[K]['type'] extends 'boolean' ? boolean :
+
+    // sqlite 不支持存储以下类型
+    T[K]['type'] extends 'timestamp' ? number :
+    T[K]['type'] extends 'array' ? string :
+    T[K]['type'] extends 'object' ? string :
+    T[K]['type'];
+};

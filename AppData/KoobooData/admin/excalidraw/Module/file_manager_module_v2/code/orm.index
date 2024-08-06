@@ -1,0 +1,399 @@
+/* 
+Create（创建）：
+
+create: 创建一个新的实体，并将其保存到数据库中。
+save: 保存 不存在创建, 存在则更新
+
+Read（读取）：
+
+findById: 根据 ID 查询一个实体。
+findOne: 根据条件查询匹配的第一个实体。
+findAll: 查询所有符合条件的实体。
+findColumn: 查询符合条件的实体 + 排序 + 分页 + 选择字段。
+count: 查询所有符合条件的数量。
+
+Update（更新）：
+
+updateById: 根据 ID 更新一个实体的信息。
+updateOne: 根据条件更新匹配的第一个实体的信息。
+updateMany: 根据条件更新所有匹配的实体的信息。
+
+Delete（删除）：
+
+deleteById: 根据 ID 删除一个实体（根据 参数2[?isDestroy] 选择删除或软删除）。
+deleteOne: 根据条件删除匹配的第一个实体。
+deleteMany: 根据条件删除所有匹配的实体。
+
+*/
+
+import type {
+    Schema,
+    Options,
+    OutputBaseModal,
+    OutputTabelModel,
+
+    WhereCondition,
+    PagingParams,
+} from './orm.types'
+
+import {
+    createTable,
+    deleteTable,
+    pickProperties,
+    excludeProperties,
+    getNow,
+    assert
+} from './orm.utils'
+
+export const Operators = k.DB.sqlite.operators()
+
+export function createModel<
+    TSchema extends Schema,
+    TOptions extends Options
+>(
+    tableName: string,
+    tableSchema: TSchema,
+    options?: TOptions
+) {
+    type BaseModal = OutputBaseModal<TOptions>
+    type TabelModel = OutputTabelModel<TSchema>
+    type Model = BaseModal & TabelModel
+
+    // 表内置字段
+    const baseSchema = { _id: { type: 'string', required: true, primaryKey: true } }
+
+    // 是否自动添加时间戳
+    let timestamps: Exclude<Options['timestamps'], true> = false
+    if (!!options?.timestamps) {
+        const { createdAt = 'created', updatedAt = 'updated' } = options?.timestamps || {}
+        baseSchema[createdAt] = { type: 'timestamp', required: true }
+        baseSchema[updatedAt] = { type: 'timestamp', required: true }
+        timestamps = { createdAt, updatedAt }
+    }
+
+    const TableInstance = k.DB.sqlite.getTable(tableName)
+    const schema: Schema = { ...baseSchema, ...tableSchema }
+
+
+    /**
+     * 数据 验证器
+     * 
+     */
+    function validate(row: Model, type?: 'create' | 'update' | 'remove'): string | null {
+        for (const key in schema) {
+            const schemaItem = schema[key]
+            // 有定义验证函数 && (必填（强制验证）|| 值存在(没有值不验证))
+            if (schemaItem.validate && (schemaItem.required || row[key] != null)) {
+                const errmsg = schemaItem.validate(row?.[key], row || {}, type)
+                if (errmsg) {
+                    return errmsg
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * 创建数据
+     */
+    function create(model: TabelModel) {
+        if (timestamps) {
+            const now = getNow()
+            model[timestamps.createdAt] = now
+            model[timestamps.updatedAt] = now
+        }
+
+        // 提取默认值
+        const defaultModel = Object.keys(schema).reduce(
+            (acc, cur) => {
+                if (schema[cur].default !== undefined) {
+                    acc[cur] = schema[cur].default
+                }
+                return acc
+            },
+            {})
+
+        const newModel = pickProperties({ ...defaultModel, ...model }, Object.keys(schema))
+        delete newModel._id
+
+        // 验证
+        const errmsg = validate(newModel, 'create')
+        assert(errmsg === null, errmsg)
+
+        const currentId = TableInstance.add(newModel)
+
+        const result = { _id: currentId, ...newModel }
+
+        Object.setPrototypeOf(result, {
+            get: function () {
+                return findById(currentId)
+            }
+        })
+
+        return result as Model & { get(): Model }
+    }
+
+
+    /**
+     * 保存数据(不存在则创建)
+     */
+    function save(model: TabelModel | Model) {
+        if (model._id) {
+            return updateById(model._id, model)
+        } else {
+            return create(model)
+        }
+    }
+
+
+    function deleteById(id: string): boolean {
+        const count = k.DB.sqlite.execute(`
+                DELETE FROM '${tableName}' WHERE _id = @id;
+            `, { id })
+        return count === 1
+    }
+
+
+    function deleteOne(where: WhereCondition<Model>): boolean {
+        const id = findOne(where)?._id
+        return id ? deleteById(id) : false
+    }
+
+
+    function deleteMany(where: WhereCondition<Model>): { [id: string]: boolean } {
+        return findAll(where).reduce((acc, cur) => {
+            acc[cur._id] = deleteById(cur._id)
+            return acc
+        }, {})
+    }
+
+
+    function updateById(id: string, updateContent: Model) {
+        return updateOne({ _id: id }, updateContent)
+    }
+
+
+    function updateOne(where: WhereCondition<Model>, updateContent: Model) {
+        const model = findOne(where)
+
+        if (!model) {
+            return null
+        }
+
+        // 更新时间戳
+        if (timestamps) {
+            const now = getNow()
+            delete updateContent[timestamps.createdAt]
+            updateContent[timestamps.updatedAt] = now
+        }
+
+        updateContent = pickProperties(updateContent, Object.keys(schema))
+
+        const newModel = { ...model, ...updateContent }
+
+        const errmsg = validate(newModel, 'update')
+        assert(errmsg === null, errmsg)
+
+        TableInstance.update(newModel)
+
+        const result = newModel
+        Object.setPrototypeOf(result, {
+            get: function () {
+                return findById(newModel._id)
+            }
+        })
+
+        return result as Model & { get(): Model }
+    }
+
+
+    function updateMany(where: WhereCondition<Model>, updateContent: Model): Model[] {
+        // 更新时间戳
+        if (timestamps) {
+            const now = getNow()
+            delete updateContent[timestamps.createdAt]
+            updateContent[timestamps.updatedAt] = now
+        }
+
+        updateContent = pickProperties(updateContent, Object.keys(schema))
+
+        const newModelList = findAll(where).map(model => {
+            const newModel = { ...model, ...updateContent }
+            // 更新校验
+            const errmsg = validate(newModel, 'update')
+            assert(errmsg === null, errmsg)
+
+            return newModel
+        })
+
+        // 批量更新 全部通过校验才更新
+        newModelList.forEach(item => {
+            TableInstance.update(item)
+        })
+
+        return newModelList
+    }
+
+
+    function findById(id: string) {
+        return findOne({ _id: id })
+    }
+
+
+    function findOne(where: WhereCondition<Model>) {
+        let model = TableInstance.find(where)
+
+        if (!model) {
+            return null
+        }
+
+        Object.setPrototypeOf(model, {
+            exclude: function (keys: (keyof Model)[]) {
+                return excludeProperties(this as Model, keys)
+            },
+            pick: function (keys: (keyof Model)[]) {
+                return pickProperties(this as Model, keys)
+            },
+        })
+
+        return model as Model & {
+            exclude<T extends keyof Model>(keys: T[]): Omit<Model, T>;
+            pick<T extends keyof Model>(keys: T[]): Pick<Model, T>;
+        }
+    }
+
+
+    interface FindListResult extends Array<Model> {
+        exclude<T extends keyof Model>(keys: T[]): Omit<Model, T>[];
+        pick<T extends keyof Model>(keys: T[]): Pick<Model, T>[];
+    }
+
+    function findAll(where: WhereCondition<Model>, params?: PagingParams<Model>) {
+        let query = TableInstance.query(where)
+        let list: FindListResult = []
+
+        if (params) {
+            const { page, page_size, sort } = params
+
+            const orderList = (sort ? (Array.isArray(sort) ? sort : [sort]) : []).map(item => {
+                // 排序
+                if (item && typeof item === 'string') {
+                    return `\`${item}\``
+                } else if (item.prop) {
+                    return `\`${item.prop}\`${item.order === 'descending' ? ' DESC' : ''}`
+                }
+            })
+
+            if (orderList.length) {
+                query.orderBy(orderList.join(','))
+            }
+
+
+            // 分页
+            if (Number.isInteger(page_size) && Number.isInteger(page)) {
+                list = query.skip((page - 1) * page_size).take(page_size)
+            } else {
+                list = query.all()
+            }
+
+        } else {
+            list = query.all()
+        }
+
+        Object.setPrototypeOf(list, {
+            exclude: function (keys: (keyof Model)[]) {
+                return (this as Model[]).map(item => {
+                    return excludeProperties(item, keys)
+                })
+            },
+            pick: function (keys: (keyof Model)[]) {
+                return (this as Model[]).map(item => {
+                    return pickProperties(item, keys)
+                })
+            },
+        })
+
+        return list
+    }
+
+
+    /**
+     * 分页查询
+     */
+    function findColumn(where: WhereCondition<Model>, params: PagingParams<Model> = { page: 1, page_size: 20 }) {
+
+        let query = TableInstance.query(where)
+        const count = query.count()
+
+        const { page, page_size, sort } = params
+
+        const orderList = (sort ? (Array.isArray(sort) ? sort : [sort]) : []).map(item => {
+            // 排序
+            if (item && typeof item === 'string') {
+                return `\`${item}\``
+            } else if (item.prop) {
+                return `\`${item.prop}\`${item.order === 'descending' ? ' DESC' : ''}`
+            }
+        })
+
+        if (orderList.length) {
+            query.orderBy(orderList.join(','))
+        }
+
+        const list: FindListResult = query.skip((page - 1) * page_size).take(page_size)
+
+        Object.setPrototypeOf(list, {
+            exclude: function (keys: (keyof Model)[]) {
+                return (this as Model[]).map(item => {
+                    return excludeProperties(item, keys)
+                })
+            },
+            pick: function (keys: (keyof Model)[]) {
+                return (this as Model[]).map(item => {
+                    return pickProperties(item, keys)
+                })
+            },
+        })
+
+        return {
+            list,
+            pager: {
+                page,
+                page_size,
+                total_rows: count
+            }
+        }
+    }
+
+
+    /**
+     * 数量查询
+     */
+    function count(where: WhereCondition<Model>) {
+        return TableInstance.query(where).count()
+    }
+
+
+    return {
+        _createTable: () => createTable(tableName, schema),
+        _deleteTable: () => deleteTable(tableName),
+
+        create,
+        save,
+
+        deleteById,
+        deleteOne,
+        deleteMany,
+
+        updateById,
+        updateOne,
+        updateMany,
+
+        findById,
+        findOne,
+        findAll,
+        findColumn,
+        count,
+
+    }
+}

@@ -1,0 +1,124 @@
+import { parseJSON } from './sys.utils'
+
+export interface CustomContext<TQuery = any, TBody = any, TParams = any> {
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    query: TQuery | { [key: string]: string }; // 用于从URL查询字符串中提取参数
+    Model: {[key: string]: string | number | boolean }
+    body: TBody | { [key: string]: string | number | boolean }; // 数据作为请求的主体发送到服务器端，通常使用JSON格式
+    params: TParams | { [key: string]: string }; // 用于RESTful API请求, 数据附加在URL路径中
+    form: { [key: string]: string };
+    files: any[];
+    _user?: string;
+    url: string;
+    clientIp: string;
+    headers: {
+        Accept: string;
+        Connection: string;
+        Host: string;
+        UserAgent: string;
+        AcceptEncoding: string;
+        AcceptLanguage: string;
+        UpgradeInsecureRequests: string;
+    };
+}
+
+type RouterCallback<TQuery = any, TBody = any, TParams = any> = (ctx: CustomContext<TQuery, TBody, TParams>) => any
+
+interface RouteConfig {
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    path: string;
+    regex: RegExp;
+    callback: RouterCallback
+}
+
+export class Router {
+    private routes: RouteConfig[] = [];
+
+    // 聚合 分模块路由
+    use(router: Router) {
+        const routes: RouteConfig[] = router.getRoutes()
+        if (routes.length) {
+            this.addRoutes(router.getRoutes())
+        }
+    }
+
+    getRoutes(): RouteConfig[] {
+        return this.routes
+    }
+
+    addRoutes(routes: RouteConfig[]) {
+        this.routes = this.routes.concat(routes)
+    }
+
+    get<TQuery, TBody, TParams>(path: string, callback: RouterCallback<TQuery, TBody, TParams>) {
+        this.routes.push({ method: 'GET', path: path, regex: this.toRegex(path), callback });
+    }
+
+    post<TQuery, TBody, TParams>(path: string, callback: RouterCallback<TQuery, TBody, TParams>) {
+        this.routes.push({ method: 'POST', path: path, regex: this.toRegex(path), callback });
+    }
+
+    put<TQuery, TBody, TParams>(path: string, callback: RouterCallback<TQuery, TBody, TParams>) {
+        this.routes.push({ method: 'PUT', path: path, regex: this.toRegex(path), callback });
+    }
+
+    delete<TQuery, TBody, TParams>(path: string, callback: RouterCallback<TQuery, TBody, TParams>) {
+        this.routes.push({ method: 'DELETE', path: path, regex: this.toRegex(path), callback });
+    }
+
+    private toRegex(path: string): RegExp {
+        const parts = path.split('/');
+        const regexParts = parts.map((part) => {
+            if (part.startsWith(':')) {
+                return '([^/]+)';
+            } else {
+                return part;
+            }
+        });
+        const regexString = `^${regexParts.join('/')}\/?$`;
+        return new RegExp(regexString);
+    }
+
+    private getParamNames(path: string): string[] {
+        const paramNames = path
+            .split('/')
+            .filter((part) => part.startsWith(':'))
+            .map((part) => part.slice(1));
+        return paramNames
+    }
+
+    route(method: string, path: string, ctx?: object = {}): Function | undefined {
+        // 精准路由匹配
+        const exactRoute = this.routes.find((r) => r.method === method && r.path === path);
+        if (exactRoute) {
+            return exactRoute.callback.bind(null, {
+                ...ctx,
+                params: {},
+                query: ctx.queryString || {},
+                body: parseJSON(ctx.body) || {}
+            });
+        }
+
+        // 动态路由匹配
+        const route = this.routes.find((r) => r.method === method && r.regex.test(path));
+        if (route) {
+            const params: { [key: string]: string } = {};
+            const match = path.match(route.regex);
+
+            const paramNames = this.getParamNames(route.path);
+            if (paramNames.length > 0) {
+                for (let i = 0; i < paramNames.length; i++) {
+                    params[paramNames[i]] = match![i + 1];
+                }
+            }
+            // k.logger.information('params', JSON.stringify(params))
+            return route.callback.bind(null, {
+                ...ctx,
+                params,
+                query: ctx.queryString || {},
+                body: parseJSON(ctx.body) || {}
+            });
+        }
+        return undefined;
+    }
+}

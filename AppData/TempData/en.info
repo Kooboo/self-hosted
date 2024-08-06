@@ -1,0 +1,135 @@
+{
+  "news": [
+    {
+      "Title": "Kooboo Desktop Application",
+      "Summary": "Kooboo is now also available as a desktop application and self-host package.  ",
+      "Image": "https://www.kooboo.com/img/logo-1080-en.png",
+      "Url": "https://www.kooboo.com/en/downloads",
+      "Date": "2024-02-28",
+      "id": "14b0cab7-f68e-55d6-2c30-2d1eb492f76c",
+      "userKey": "kooboo-E69CACE59CB0E78988",
+      "lastModified": "2024-02-29T02:58:46.8486748Z",
+      "creationDate": "2024-02-29T02:58:46.8486285Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1376,
+      "sequence": 0
+    },
+    {
+      "Title": "Development Concepts",
+      "Summary": "The development concept of Kooboo is similar to what you already know in web development. if you are familiar with writing HTML and CSS, you will find it easy to use Kooboo.",
+      "Image": null,
+      "Url": "https://www.kooboo.com/en/docs/Development/develoment_concept",
+      "Date": "2024-02-28",
+      "id": "1d331812-486f-50f4-1fc9-d3a7ba4ab0c9",
+      "userKey": "The-development-concept-of-Kooboo-is-similar-to-what-you-already-know-in-web-development.-",
+      "lastModified": "2024-02-29T02:52:50.5048849Z",
+      "creationDate": "2024-02-29T02:37:53.0600923Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1375,
+      "sequence": 0
+    },
+    {
+      "Title": "Cut Development Cost by 80%",
+      "Summary": "To accomplish the objective of expanding our web development team while concurrently reducing costs, we need to address the following challenges.",
+      "Image": null,
+      "Url": "https://www.kooboo.com/en/docs/Innovation/save_80_percent_cost",
+      "Date": "2024-02-26",
+      "id": "53b7e73b-dcec-1a2d-1ae0-ff3430bb6287",
+      "userKey": "E88A82E79C8180-E79A84E5BC80E58F91E8B4B9E794A8",
+      "lastModified": "2024-02-29T02:35:14.7363147Z",
+      "creationDate": "2024-02-29T02:35:14.736283Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1370,
+      "sequence": 0
+    },
+    {
+      "Title": "Kooboo MailBox",
+      "Summary": "Users can manage multiple domains and addresses effortlessly. Each user account is associated with a unique Mail account, and domains are organized based on the user'organization.",
+      "Image": null,
+      "Url": "https://www.kooboo.com/en/docs/domain-mailbox/multi-domain-email-address",
+      "Date": "2024-0228",
+      "id": "3e5d590f-a3e3-e434-09c2-7f604dd27e53",
+      "userKey": "Kooboo-E982AEE7AEB1E59586E794A8",
+      "lastModified": "2024-02-29T02:33:40.2764351Z",
+      "creationDate": "2024-02-29T02:33:09.2241955Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1369,
+      "sequence": 0
+    }
+  ],
+  "banner": null,
+  "doc": [
+    {
+      "Name": "Content",
+      "ICO": "https://www.kooboo.com/icon/content.svg",
+      "URL": "https://www.kooboo.com/en/docs/Content/content_type",
+      "id": "aca3f983-5a52-50d7-4ca5-d6a3b17648bb",
+      "userKey": "Content0",
+      "lastModified": "2024-03-02T03:54:14.0371243Z",
+      "creationDate": "2024-02-29T03:03:07.121305Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1400,
+      "sequence": 0
+    },
+    {
+      "Name": "Development",
+      "ICO": "https://www.kooboo.com/document-api-icon.svg",
+      "URL": "https://www.kooboo.com/en/docs/Development/develoment_concept",
+      "id": "6a4305b2-4eb5-df58-9b72-d5c2301555ff",
+      "userKey": "Development1",
+      "lastModified": "2024-03-02T03:54:24.6549082Z",
+      "creationDate": "2024-02-29T03:03:42.3873395Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1402,
+      "sequence": 0
+    },
+    {
+      "Name": "Template Engine",
+      "ICO": "https://www.kooboo.com/icon/template.svg",
+      "URL": "https://www.kooboo.com/en/docs/TemplateEngine/tpl-vue-concept",
+      "id": "15d386dd-a4eb-e648-76db-bb6ddb6d2024",
+      "userKey": "E6A8A1E69DBFE5BC95E6938E",
+      "lastModified": "2024-03-02T03:54:17.4328104Z",
+      "creationDate": "2024-02-29T03:06:01.6944267Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1401,
+      "sequence": 0
+    },
+    {
+      "Name": "KScript",
+      "ICO": "https://www.kooboo.com/icon/Ksctipt.svg",
+      "URL": "https://www.kooboo.com/en/docs/KScript/kscript-concept",
+      "id": "140ab81e-3fa3-64e2-2c87-ee7b8515636d",
+      "userKey": "E8849AE69CAC",
+      "lastModified": "2024-03-02T03:54:28.0530516Z",
+      "creationDate": "2024-02-29T03:04:28.1276731Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1403,
+      "sequence": 0
+    },
+    {
+      "Name": "Multilingual",
+      "ICO": "https://www.kooboo.com/icon/multilingual.svg",
+      "URL": "https://www.kooboo.com/en/docs/multilingual/multilingual-setting",
+      "id": "0f268bd5-5818-4d8a-ca3d-b55af5f0e576",
+      "userKey": "E5A49AE8AFADE8A880",
+      "lastModified": "2024-03-02T03:54:32.5572166Z",
+      "creationDate": "2024-02-29T03:05:15.96054Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1404,
+      "sequence": 0
+    },
+    {
+      "Name": "Domain Mailbox",
+      "ICO": "https://www.kooboo.com/icon/mail.svg",
+      "URL": "https://www.kooboo.com/en/docs/domain-mailbox/multi-domain-email-address",
+      "id": "604f2186-5fa7-a199-a8db-fcb16be7f0b6",
+      "userKey": "E4BC81E4B89AE982AEE5B180",
+      "lastModified": "2024-02-29T03:06:32.2606263Z",
+      "creationDate": "2024-02-29T03:06:32.2605979Z",
+      "parentId": "00000000-0000-0000-0000-000000000000",
+      "version": 1385,
+      "sequence": 0
+    }
+  ]
+}

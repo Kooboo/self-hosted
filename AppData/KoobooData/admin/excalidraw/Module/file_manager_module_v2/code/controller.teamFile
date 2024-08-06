@@ -1,0 +1,57 @@
+import { CustomContext } from './sys.router'
+import { CustomError, deepClone } from './sys.utils'
+import teamFilesModel from './model.teamFiles'
+import userFilesModel from './model.userFiles'
+
+class TeamFileController {
+    copy(ctx: CustomContext) {
+        const { dataType, coverType } = k.site.info.setting
+        const { _user, params: { id }, body: { copyName } } = ctx
+        const file = teamFilesModel.findOne({ _id: id })
+        if (!file) throw new CustomError(404)
+        const newFile = userFilesModel.create({
+            name: copyName,
+            authorName: _user
+        })
+        const fileBinary = k.file.readBinary(file.fullName)
+        const coverBinary = file.coverFullName ? k.file.readBinary(file.coverFullName) : null
+        const fileInfo = 
+            k.file.writeBinary(`/user_file/${_user}/content/${newFile._id}${dataType ? '.' + dataType : ''}`, fileBinary)
+        const coverInfo =
+            coverBinary
+                ? k.file.writeBinary(`/user_file/${_user}/cover/${newFile._id}${coverType ? '.' + coverType : ''}`, coverBinary)
+                : null
+        userFilesModel.updateById(newFile._id, {
+            fullName: fileInfo.fullName,
+            url: fileInfo.url,
+            size: fileInfo.size,
+            coverFullName: coverInfo?.fullName,
+            coverUrl: coverInfo?.url
+        })
+        return `File ${file.name} copied successfully`
+    }
+
+    list() {
+        const fileList = teamFilesModel.findAll()
+        return deepClone(fileList).map(file => ({
+            id: file._id,
+            name: file.name,
+            url: file.url,
+            size: file.size,
+            coverUrl: file.coverUrl,
+            authorName: file.authorName
+        }))
+    }
+
+    delete(ctx: CustomContext) {
+        const { _user, params: { id } } = ctx
+        const file = teamFilesModel.findOne({ authorName: _user, _id: id })
+        if (!file) throw new CustomError(404)
+        k.file.delete(file.fullName)
+        k.file.delete(file.coverFullName)
+        teamFilesModel.deleteById(file._id)
+        return `${file.name} deletion successful`
+    }
+}
+
+export default new TeamFileController

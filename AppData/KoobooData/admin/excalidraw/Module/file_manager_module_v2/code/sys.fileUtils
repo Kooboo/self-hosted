@@ -1,0 +1,4 @@
+export function writeFile(fullName: string, content: string | number[]) {
+    if ((typeof content) === 'string') return k.file.write(fullName, content)
+    else return k.file.writeBinary(fullName, content)
+}

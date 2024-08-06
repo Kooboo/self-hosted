@@ -1,0 +1,64 @@
+import { CustomContext } from './sys.router'
+import { CustomError } from './sys.utils'
+
+import userFilesModel from './model.userFiles'
+
+class CommunityFileController {
+    list(ctx: CustomContext) {
+        const { appType } = k.site.info.setting
+        const { query: { keyword = '', skip = 0, count = 12 } } = ctx
+        return k.utils.community.search(appType, keyword, skip, count)
+    }
+
+    copy(ctx: CustomContext) {
+        const { dataType, coverType } = k.site.info.setting
+        const { _user, body: { copyName, url, coverUrl} } = ctx
+        // const exist = !!userFilesModel.findOne({ authorName: _user, name: copyName })
+        // if (exist) throw new CustomError(409)
+        const fileBinary = k.utils.community.downloadFile(url)
+        const coverBinary = k.utils.community.downloadFile(coverUrl)
+        
+        const file = userFilesModel.create({
+            name: copyName,
+            authorName: _user
+        })
+
+        const fileInfo = k.file.writeBinary(`/user_file/${_user}/data/${file._id}${dataType ? '.' + dataType : ''}`, fileBinary)
+        const coverInfo = coverBinary ? k.file.writeBinary(`/user_file/${_user}/cover/${file._id}${coverType ? '.' + coverType : ''}`, coverBinary) : null
+        userFilesModel.updateById(file._id, {
+            fullName: fileInfo.fullName,
+            url: fileInfo.url,
+            size: fileInfo.size,
+            coverFullName: coverInfo.fullName,
+            coverUrl: coverInfo.url
+        })
+        // userFilesModel.create({
+        //     name: copyName,
+        //     fullName: fileInfo.fullName,
+        //     url: fileInfo.url,
+        //     coverName: coverInfo?.url,
+        //     coverFullName: coverInfo?.fullName,
+        //     coverUrl: coverInfo?.url,
+        //     stringSize: fileInfo?.stringSize,
+        //     numberSize: fileInfo.size,
+        //     authorName: _user
+        // })
+        return `File copied successfully`
+    }
+
+    delete(ctx: CustomContext) {
+        const { id } = ctx.params
+        k.utils.community.delete(id)
+        return `${id} deletion successful`
+    }
+
+    getBinary(ctx: CustomContext) {
+        const { url, type } = ctx.query
+        
+        const binary = k.utils.community.downloadFile(decodeURIComponent(url))
+        k.response.binary(type, binary)
+        return
+    }
+}
+
+export default new CommunityFileController

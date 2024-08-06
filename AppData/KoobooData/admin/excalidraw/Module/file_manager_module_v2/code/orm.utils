@@ -1,0 +1,143 @@
+// 创建表结构
+export function createTable(tableName: string, config: TableConfig): string {
+    let query = `CREATE TABLE IF NOT EXISTS '${tableName}' (`;
+
+    for (const columnName in config) {
+        const columnConfig = config[columnName];
+        query += `${columnName} `;
+
+        switch (columnConfig.type) {
+            case 'number':
+                query += 'INTEGER';
+                break;
+            case 'float':
+                query += 'REAL';
+                break;
+            case 'string':
+            case 'array':
+            case 'object':
+                query += 'TEXT'; // string | JSON
+                break;
+            case 'timestamp':
+                query += 'INTEGER'; // Date.now() / 1000
+                break;
+            case 'boolean':
+                query += 'INTEGER'; // SQLite does not have a dedicated boolean type, we use INTEGER (0 or 1) instead
+                break;
+            default:
+                throw new Error(`Unsupported data type for column ${columnName}: ${columnConfig.type}`);
+        }
+
+        if (columnConfig.primaryKey) {
+            query += ' PRIMARY KEY';
+        }
+
+        if (columnConfig.autoincrement) {
+            if (columnConfig.type !== 'number') {
+                throw new Error('AUTOINCREMENT is only supported for columns of type "number".');
+            }
+            query += ' AUTOINCREMENT';
+        }
+
+        if (columnConfig.required) {
+            query += ' NOT NULL';
+        }
+
+        // 默认值由orm去手动添加
+        // if (columnConfig.default !== undefined) {
+        //     const defaultValue =
+        //         typeof columnConfig.default === 'string'
+        //             ? `'${columnConfig.default}'`
+        //             : columnConfig.default;
+        //     query += ` DEFAULT ${defaultValue}`;
+        // }
+
+        query += ', ';
+    }
+
+    query = query.slice(0, -2); // Remove the trailing comma and space
+
+    query += ');';
+
+    k.DB.sqlite.execute(query);
+    return 'Create Table ' + tableName;
+}
+
+// 删除表并重置自增
+export function deleteTable(tableName: string) {
+    try {
+        // Step 1: Drop the table if it exists
+        const dropTableSQL = `DROP TABLE IF EXISTS '${tableName}';`;
+        k.DB.sqlite.execute(dropTableSQL);
+
+        // Step 2: Clear space occupied by the table
+        // SQLite automatically reclaims space, so there's no specific command to clear space.
+
+        // Step 3: Reset the auto-increment values
+        const resetAutoIncrementSQL = `DELETE FROM SQLITE_SEQUENCE WHERE name='${tableName}';`;
+        k.DB.sqlite.execute(resetAutoIncrementSQL);
+
+        // console.log(`Table '${tableName}' deleted, space cleared, and auto-increment values reset.`);
+    } catch (error) {
+        k.logger.error('Error deleting table and resetting auto-increment values:', error);
+    }
+}
+
+export function excludeProperties<T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
+    const copy = { ...obj };
+    for (const key of keys) {
+        delete copy[key];
+    }
+    return copy;
+}
+
+export function pickProperties<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+    const result: Pick<T, K> = {} as Pick<T, K>;
+    for (const key of keys) {
+        if (obj[key] !== undefined) {
+            result[key] = obj[key];
+        }
+    }
+    return result;
+}
+
+
+export function getNow(): number {
+    const now = Date.now()
+    // return Math.floor(now / 1000)
+    return now
+}
+
+
+export class CustomError extends Error {
+    public errorCode: number
+
+    constructor(errorCode: number, message: string, name: string)
+    constructor(params: { errorCode: number, message: string, name: string })
+
+    constructor(arg1: number | { errorCode: number, message: string, name: string }, message?: string, name?: string) {
+        if (typeof arg1 === 'number') {
+            super(message || 'CustomError')
+            this.errorCode = arg1
+            this.name = name || 'CustomError'
+        } else {
+            super(arg1.message)
+            this.errorCode = arg1.errorCode
+            this.name = arg1.name
+        }
+    }
+}
+type AssertError = CustomError | Error | { errorCode: number, message: string, name: string } | string
+export function assert(condition: boolean, error: AssertError): asserts condition {
+    if (!condition) {
+        if (error instanceof CustomError || error instanceof Error) {
+            throw error
+        } else if (typeof error === 'object') {
+            throw new CustomError(error.errorCode, error.message, error.name)
+        } else if (typeof error === 'string') {
+            throw new CustomError(-1, error, error)
+        } else {
+            throw new CustomError(-1, 'Assertion failed', 'Assertion failed')
+        }
+    }
+}

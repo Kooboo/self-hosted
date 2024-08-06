@@ -1,0 +1,36 @@
+ import {Operators, createModel} from './index'
+
+
+ const schema = createModel('admin', {
+    user_id: {
+        type: 'string',
+        required: true
+    },
+    name: { // 名
+        type: 'string',
+        required: true
+    },
+    surname: { // 姓
+        type: 'string',
+        require: true
+    },
+    avatar: {
+        type: 'string'
+    },
+    role: { // admin-管理员 staff-员工
+        type: 'string',
+        default: 'staff'
+    },
+}, { timestamps: true })
+
+
+// schema.create({
+//     avatar: 'xxx',
+//     name: 'xxxx'
+// })
+
+// schema.findOne({}).pick(['_id'])._id
+// schema.findOne({}).exclude(['_id']).
+
+// schema.findAll({}).pick(['_id'])[0]._id
+// schema.findAll({}).exclude(['_id'])[0].
