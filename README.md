@@ -18,7 +18,7 @@ DrawIO, Excalidraw, Quant UX Prototype, TL Draw canvas, Polotno studio, Variant 
 
 Download the source code or the release package. This is a Portable Windows Application, For Mac or Linux, you can download Kooboo, login and install from the market yourself. 
 
-Double click on Kooboo.exe to run, no installation needed. You may login anywhere by:
+Unzip and double click on Kooboo.exe to run, no installation needed. You may login anywhere by:
 
 ```Text
 
