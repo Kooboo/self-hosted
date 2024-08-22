@@ -18,7 +18,12 @@ DrawIO, Excalidraw, Quant UX Prototype, TL Draw canvas, Polotno studio, Variant 
 
 The process for installing and using Kooboo varies depending on your operating system. Follow the instructions below to get started with Kooboo on different platforms.
 
-After logging in, install or open the AppBox application. AppBox is a Kooboo tool designed to help you easily manage and install Kooboo applications. Once inside AppBox, you will reach a screen where you can connect, install, and use various Kooboo applications.
+After logging in, install or open the AppBox application. AppBox is a Kooboo tool designed to help you easily manage and install Kooboo applications. AppBox is pre-installed for the Windows Portable application downloaded from this Git repository. For other platforms, install it yourself from the market after logging in
+
+![image](https://github.com/user-attachments/assets/8bf25880-5c49-4d35-a2f3-c02a875db2c5)
+
+
+Once inside AppBox, you will reach a screen where you can connect, install, and use various Kooboo applications.
  
 ![{~HX08TPUW~(L16 XRX$N%O](https://github.com/user-attachments/assets/5d344b9d-bf5d-44c7-9b95-3d2e54390c83)
  
@@ -60,16 +65,7 @@ Run:
 docker run -d -p 80:80 -v /var/lib/kooboo:/data --name kooboo kooboo/kooboo:latest
 ```
 Open the application from browser and register an account to login
-
-
-
-Download
-
-Windows user may search Kooboo on Microsoft Store and install from there.
  
-Go to install
-
-
 
 # Linux
 
